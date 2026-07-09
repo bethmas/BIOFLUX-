@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { createPool } from 'mysql2/promise';
@@ -39,7 +40,12 @@ app.use(cors());
 app.use(express.json());
 
 const frontendPath = path.resolve(__dirname, '../../frontend/dist');
-app.use(express.static(frontendPath));
+const frontendIndexPath = path.join(frontendPath, 'index.html');
+const frontendAvailable = fs.existsSync(frontendIndexPath);
+
+if (frontendAvailable) {
+  app.use(express.static(frontendPath));
+}
 
 function hashPassword(password: string) {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -87,14 +93,20 @@ app.get('/api', (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  if (frontendAvailable) {
+    return res.sendFile(frontendIndexPath);
+  }
+  res.json({ name: 'BioFlux Backend API', status: 'ok' });
 });
 
 app.get('*', (req: Request, res: Response) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  if (frontendAvailable) {
+    return res.sendFile(frontendIndexPath);
+  }
+  return res.status(404).json({ error: 'Frontend not built' });
 });
 
 app.get('/api/health', (req: Request, res: Response) => {
@@ -340,6 +352,6 @@ app.patch('/api/requests/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Backend server is running on http://localhost:${port}`);
+app.listen(Number(port), '0.0.0.0', () => {
+  console.log(`Backend server is running on http://0.0.0.0:${port}`);
 });
