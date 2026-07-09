@@ -2,6 +2,22 @@
 
 USE bioflux_db;
 
+INSERT INTO users (id, name, email, password_hash, role, location, phone)
+VALUES
+  ('1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', 'John Musoke', 'resident@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'resident', 'Nakawa Village', '+256 700 123 456'),
+  ('2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e', 'BioFlux Dispatch', 'company@example.com', '54e48cbd75ad8c2d3237b35a151ca891de8ebd4ec6d2a958a51121e074c1ba51', 'company', 'Kampala HQ', '+256 700 234 567'),
+  ('3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'Grace Nakaweesi', 'farmer@example.com', '26c07fc7be1668f8ea7e3801d4ffdbf33de487a593a69028936ec49f2c89f6ab', 'farmer', 'Kayunga Village', '+256 700 567 890');
+
+INSERT INTO overflow_reports (id, reporter_id, title, description, location, phone, status)
+VALUES
+  ('740da9e5-c309-4c31-8f22-33f7fbd2a412', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', 'Overflowing Latrine', 'Waste water is spilling from the community latrine and needs urgent clearing.', 'Nakawa Village, near St. Mary’s School', '+256 700 123 456', 'Dispatched'),
+  ('9a2f0d14-7b6c-4a12-a789-5f6b7c8d9e0f', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', 'Blocked Sewer Line', 'The sewer line behind the market is blocked and overflowing into the street.', 'Nakawa Village, behind market', '+256 700 123 456', 'Cleared');
+
+INSERT INTO manure_requests (id, farmer_id, amount_requested, location, phone, status)
+VALUES
+  ('a4f7d28e-63b9-4c7e-9d52-6e3f2b1c0d4a', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', '500 kg', 'Kayunga Village, main road junction', '+256 700 567 890', 'Ready'),
+  ('b5f8e39d-74ca-5d8f-0e63-7f4c3d2b1a5e', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', '300 kg', 'Mukono Village, near trading center', '+256 700 567 890', 'Processing');
+
 INSERT INTO researchers (id, name, email, institution)
 VALUES
   ('4e4e7b66-8a4a-4d9c-af1f-110c0c6c6d90', 'Dr. Maya Santos', 'maya.santos@biofluxlab.edu', 'BioFlux Research Institute'),
