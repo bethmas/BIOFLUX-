@@ -76,7 +76,7 @@ function App() {
     if (!token) return;
 
     setLoading(true);
-    fetch('/api/me', { headers: { 'x-user-id': token } })
+    apiFetch('/api/me', { headers: { 'x-user-id': token } })
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data) => {
         setUser(data.user);
@@ -96,13 +96,13 @@ function App() {
     const fetchData = async () => {
       try {
         if (user.role === 'resident' || user.role === 'company') {
-          const res = await fetch('/api/reports', { headers });
+          const res = await apiFetch('/api/reports', { headers });
           const data = await res.json();
           setReports(data);
         }
 
         if (user.role === 'farmer' || user.role === 'company') {
-          const res = await fetch('/api/requests', { headers });
+          const res = await apiFetch('/api/requests', { headers });
           const data = await res.json();
           setRequests(data);
         }
@@ -118,6 +118,12 @@ function App() {
     () => ({ 'Content-Type': 'application/json', ...(token ? { 'x-user-id': token } : {}) }),
     [token]
   );
+
+  const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+  const apiFetch = async (path: string, options: RequestInit = {}) => {
+    const url = path.startsWith('http') ? path : `${apiBaseUrl}${path}`;
+    return fetch(url, options);
+  };
 
   const appTheme = useMemo(() => {
     if (!user) {
@@ -146,7 +152,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/register', {
+      const response = await apiFetch('/api/register', {
         method: 'POST',
         headers: apiHeaders,
         body: JSON.stringify(registerForm),
@@ -171,7 +177,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await apiFetch('/api/login', {
         method: 'POST',
         headers: apiHeaders,
         body: JSON.stringify(loginForm),
@@ -208,7 +214,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/reports', {
+      const response = await apiFetch('/api/reports', {
         method: 'POST',
         headers: apiHeaders,
         body: JSON.stringify({ title: 'Overflowing Latrine', ...newReport, phone: newReport.phone || user.phone }),
@@ -217,7 +223,7 @@ function App() {
       if (!response.ok) throw new Error(data.error || 'Could not submit report');
       setStatusMessage('Report submitted successfully');
       setNewReport({ location: '', description: '', phone: user.phone || '' });
-      const refreshed = await fetch('/api/reports', { headers: token ? { 'x-user-id': token } : undefined }).then((res) => res.json());
+      const refreshed = await apiFetch('/api/reports', { headers: token ? { 'x-user-id': token } : undefined }).then((res) => res.json());
       setReports(refreshed);
     } catch (err: any) {
       setError(err.message || 'Could not submit report');
@@ -234,7 +240,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/requests', {
+      const response = await apiFetch('/api/requests', {
         method: 'POST',
         headers: apiHeaders,
         body: JSON.stringify({ ...newRequest, phone: newRequest.phone || user.phone }),
@@ -243,7 +249,7 @@ function App() {
       if (!response.ok) throw new Error(data.error || 'Could not submit request');
       setStatusMessage('Manure request submitted successfully');
       setNewRequest({ amount_requested: '', location: '', phone: user.phone || '' });
-      const refreshed = await fetch('/api/requests', { headers: token ? { 'x-user-id': token } : undefined }).then((res) => res.json());
+      const refreshed = await apiFetch('/api/requests', { headers: token ? { 'x-user-id': token } : undefined }).then((res) => res.json());
       setRequests(refreshed);
     } catch (err: any) {
       setError(err.message || 'Could not submit request');
@@ -258,14 +264,14 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/reports/${id}`, {
+      const response = await apiFetch(`/api/reports/${id}`, {
         method: 'PATCH',
         headers: apiHeaders,
         body: JSON.stringify({ status }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update report');
-      const refreshed = await fetch('/api/reports', { headers: { 'x-user-id': token! } }).then((res) => res.json());
+      const refreshed = await apiFetch('/api/reports', { headers: { 'x-user-id': token! } }).then((res) => res.json());
       setReports(refreshed);
       setStatusMessage('Report status updated');
     } catch (err: any) {
@@ -281,14 +287,14 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/requests/${id}`, {
+      const response = await apiFetch(`/api/requests/${id}`, {
         method: 'PATCH',
         headers: apiHeaders,
         body: JSON.stringify({ status }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update request');
-      const refreshed = await fetch('/api/requests', { headers: { 'x-user-id': token! } }).then((res) => res.json());
+      const refreshed = await apiFetch('/api/requests', { headers: { 'x-user-id': token! } }).then((res) => res.json());
       setRequests(refreshed);
       setStatusMessage('Request status updated');
     } catch (err: any) {
