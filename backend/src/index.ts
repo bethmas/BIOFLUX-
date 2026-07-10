@@ -198,38 +198,7 @@ if (frontendAvailable) {
   app.use(express.static(frontendPath));
 }
 
-function hashPassword(password: string) {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
-
-async function findUserByEmail(email: string) {
-  const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]) as [any[], any];
-  return rows[0] || null;
-}
-
-async function findUserById(id: string) {
-  const [rows] = await pool.execute('SELECT id, name, email, role, location, phone FROM users WHERE id = ?', [id]) as [any[], any];
-  return rows[0] || null;
-}
-
-function getUserFromHeader(req: Request) {
-  const userId = req.header('x-user-id');
-  return userId ? findUserById(userId) : Promise.resolve(null);
-}
-
-function formatUser(user: any) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    location: user.location || '',
-    phone: user.phone || '',
-  };
-}
-
-app.get('/api', (req: Request, res: Response) => {
-app.get('/', (_req: Request, res: Response) => {
+app.get('/api', (_req: Request, res: Response) => {
   res.json({
     name: 'BioFlux Backend API',
     version: '1.0.0',
@@ -264,7 +233,6 @@ app.get('*', (req: Request, res: Response) => {
   return res.status(404).json({ error: 'Frontend not built' });
 });
 
-app.get('/api/health', (req: Request, res: Response) => {
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date() });
 });
@@ -541,8 +509,8 @@ async function startServer() {
     await ensureResidentReportsTable();
     await ensureRequestsTable();
     await seedSampleUsers();
-    app.listen(port, () => {
-      console.log(`Backend server is running on http://localhost:${port}`);
+    app.listen(Number(port), '0.0.0.0', () => {
+      console.log(`Backend server is running on http://0.0.0.0:${port}`);
     });
   } catch (error) {
     console.error('Failed to start backend:', error);
@@ -550,7 +518,4 @@ async function startServer() {
   }
 }
 
-app.listen(Number(port), '0.0.0.0', () => {
-  console.log(`Backend server is running on http://0.0.0.0:${port}`);
-});
 startServer();
