@@ -29,3 +29,13 @@ The production output will be in `frontend/dist`.
 ## Backend integration
 
 When the frontend is built, the backend can serve the static files from `frontend/dist`.
+
+## Sample logins
+
+You can use these demo accounts in the app:
+
+- Resident: `resident@bioflux.com` / `password123`
+- Company: `company@bioflux.com` / `password123`
+- Farmer: `farmer@bioflux.com` / `password123`
+
+Make sure the backend is running on `http://localhost:5000` before signing in.
