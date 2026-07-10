@@ -243,7 +243,7 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ name: 'BioFlux Backend API', status: 'ok' });
 });
 
-app.get('/*splash',(req: Request, res: Response) => {
+app.get('*', (req: Request, res: Response) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
