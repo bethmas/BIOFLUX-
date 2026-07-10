@@ -257,16 +257,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ name: 'BioFlux Backend API', status: 'ok' });
 });
 
-app.use((req: Request, res: Response, next: Function) => {
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({ error: 'Not found' });
-  }
-  if (frontendAvailable) {
-    return res.sendFile(frontendIndexPath);
-  }
-  return res.status(404).json({ error: 'Frontend not built' });
-});
-
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date() });
 });
@@ -535,6 +525,16 @@ app.patch('/api/requests/:id', async (req: Request, res: Response) => {
     created_at: requestItem.created_at ? new Date(requestItem.created_at).toISOString() : new Date().toISOString(),
     userId: requestItem.userId,
   });
+});
+
+app.use((req: Request, res: Response, next: Function) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  if (frontendAvailable) {
+    return res.sendFile(frontendIndexPath);
+  }
+  return res.status(404).json({ error: 'Frontend not built' });
 });
 
 async function startServer() {
