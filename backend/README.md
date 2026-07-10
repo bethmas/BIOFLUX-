@@ -34,13 +34,12 @@ DB_NAME=bioflux_db
 DB_PORT=3306
 PORT=5000
 JWT_SECRET=bioflux_student_secret
-# Optional for Aiven / Render deployments:
-# DATABASE_URL=mysql://user:pass@host:3306/bioflux_db?sslmode=require
-# DB_SSL=true
 ```
 
 The backend reads `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `DB_PORT` from `.env`.
 It also supports `DATABASE_URL` and `DB_SSL=true` for hosted MySQL services such as Aiven.
+
+For Render, using `DATABASE_URL` is recommended to avoid credential mistakes.
 
 ## Render deployment
 
@@ -49,15 +48,19 @@ If you deploy this backend on Render:
 - Build command: `npm run build`
 - Start command: `npm start`
 - Environment variables:
-  - `DATABASE_URL` set to your Aiven MySQL URI, or
-  - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+  - `DATABASE_URL` set to your Aiven MySQL URI
+  - `PORT=10000`
+  - `NODE_ENV=production`
   - `DB_SSL=true` if Aiven requires SSL
+
+This is the preferred Render configuration because it avoids setting individual DB credentials separately.
 
 For example:
 
 ```text
 DATABASE_URL=mysql://username:password@hostname:3306/bioflux_db?sslmode=require
 PORT=10000
+NODE_ENV=production
 ```
 
 Render will use `PORT` from the environment, and the backend listens on `0.0.0.0`.
